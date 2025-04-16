@@ -58,6 +58,7 @@ router.post('/', async (req, res) => {
     try {
         const newpost = new postmodel({ title, description });    
         await newpost.save();
+        console.log(newpost);
         res.status(200).json({ message: "successfully created post" });
     } catch (error) {
         res.status(400).json({ message: "error in creating post", error: error.message });
@@ -72,5 +73,29 @@ router.get('/', async (req, res) => {
         res.status(400).json({ message: "error in reading post", error: error.message });
     }
 });
+// update post route
+router.put('/:id',async (req,res)=>{
+    const {title,description} = req.body;
+    if(!title || !description){
+        return res.status(400).json({message:"title & description is required in update post"})
+    }
+    try {
+         const updatepost = await postmodel.findByIdAndUpdate(req.params.id,{title,description},{new:true});
+         res.status(200).json({message:"successfully updated post",updatepost})
+          
+    } catch (error) {
+        res.status(400).json({message:"error in updating post",error:error.message})
+    }
+});
+// delete post route
+router.delete('/:id', async (req,res)=>{
+    try {
+         const deletepost = await postmodel.findByIdAndDelete(req.params.id);
+         res.status(200).json({message:"successfully deleted post",deletepost})
+    } catch (error) {
+        res.status(400).json({message:"error in deleting post",error:error.message})
+    }
+
+})
 
 module.exports = router;
